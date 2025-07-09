@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0c0c0c;
+}
+
+/* Custom gradient for radial effect */
+@layer utilities {
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0c0c0c;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffa500;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff8c00;
+}
+
+/* Smooth transitions for all elements */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* AdSense responsive styling */
+.ad-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.adsbygoogle {
+  background: transparent !important;
+}
+
+/* Ensure ads don't break layout */
+@media (max-width: 768px) {
+  .adsbygoogle {
+    max-width: 100% !important;
+    overflow: hidden;
+  }
+}
