@@ -230,7 +230,7 @@ app.post('/api/style-match', upload.single('image'), async (req, res) => {
       input: {
         prompt: prompt,
         image: req.file.buffer,
-        strength: 0.45, // Preserve structure while allowing style changes
+        strength: 0.75, // Allow more significant style changes while preserving basic structure
         guidance: 4.5,  // Balanced guidance for quality and adherence
         num_inference_steps: 28,
         seed: Math.floor(Math.random() * 1000000) // Random seed for variety
