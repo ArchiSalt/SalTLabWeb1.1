@@ -129,25 +129,41 @@ const StyleMatch = () => {
   const analyzeImage = async (imageData: string) => {
     setIsAnalyzing(true);
     
-    // Simulate AI analysis with realistic delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mock analysis results - in real implementation, this would call an AI service
-    const mockAnalysis: AnalysisResult = {
-      photoType: Math.random() > 0.5 ? 'exterior' : 'interior',
-      angle: ['above', 'below', 'eye-level'][Math.floor(Math.random() * 3)] as 'above' | 'below' | 'eye-level',
-      confidence: 0.85 + Math.random() * 0.1,
-      detectedElements: [
-        'Windows', 'Roofline', 'Facade', 'Architectural details', 'Materials', 'Proportions'
-      ].slice(0, 3 + Math.floor(Math.random() * 3)),
-      suggestedStyles: architecturalStyles
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 5)
-        .map(style => style.name)
-    };
-    
-    setAnalysis(mockAnalysis);
-    setIsAnalyzing(false);
+    try {
+      // Convert data URL to blob
+      const response = await fetch(imageData);
+      const blob = await response.blob();
+      
+      // Create form data
+      const formData = new FormData();
+      formData.append('image', blob, 'uploaded-image.jpg');
+      
+      // Call the analysis API
+      const analysisResponse = await fetch('/api/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!analysisResponse.ok) {
+        const errorData = await analysisResponse.json();
+        throw new Error(errorData.error || 'Analysis failed');
+      }
+      
+      const analysisResult: AnalysisResult = await analysisResponse.json();
+      setAnalysis(analysisResult);
+      
+    } catch (error) {
+      console.error('Analysis error:', error);
+      setAnalysis({
+        photoType: 'exterior',
+        angle: 'eye-level',
+        confidence: 0,
+        detectedElements: ['Analysis failed'],
+        suggestedStyles: []
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const generateStyledImage = async () => {
@@ -155,13 +171,42 @@ const StyleMatch = () => {
     
     setIsGenerating(true);
     
-    // Simulate AI image generation
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // In real implementation, this would call an AI image generation service
-    // For demo, we'll use a placeholder that shows the style was applied
-    setGeneratedImage(uploadedImage); // Placeholder - would be the AI-generated result
-    setIsGenerating(false);
+    try {
+      // Convert data URL to blob
+      const response = await fetch(uploadedImage);
+      const blob = await response.blob();
+      
+      // Create form data
+      const formData = new FormData();
+      formData.append('image', blob, 'uploaded-image.jpg');
+      formData.append('styleName', selectedStyle);
+      
+      // Include analysis data if available
+      if (analysis) {
+        formData.append('analysis', JSON.stringify(analysis));
+      }
+      
+      // Call the style generation API
+      const generationResponse = await fetch('/api/style-match', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!generationResponse.ok) {
+        const errorData = await generationResponse.json();
+        throw new Error(errorData.error || 'Style generation failed');
+      }
+      
+      const result = await generationResponse.json();
+      setGeneratedImage(result.outputUrl);
+      
+    } catch (error) {
+      console.error('Style generation error:', error);
+      // Keep the original image as fallback
+      setGeneratedImage(uploadedImage);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const downloadImage = () => {
