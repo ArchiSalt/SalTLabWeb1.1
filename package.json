@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "node server/index.js"
+    "server": "node server/index.js",
+    "server:dev": "node --loader ts-node/esm server.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.3",
