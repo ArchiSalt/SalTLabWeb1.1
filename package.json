@@ -9,8 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server/index.js",
-    "build:server": "tsc -p tsconfig.server.json",
-    "server:dev": "npm run build:server && node dist/server.js"
+    "server:dev": "tsx server.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.3",
